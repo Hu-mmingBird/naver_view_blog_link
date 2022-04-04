@@ -5,8 +5,8 @@ import os
 THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
 
 url="https://search.naver.com/search.naver?where=view&sm=tab_jum&query=%EB%A7%9B%EC%A7%91"
-driver=webdriver.PhantomJS("D:\\2021-2\\lesson\\blogCrawler\\phantomjs-2.1.1-windows\\bin\\phantomjs")
-driver.implicitly_wait(1)
+driver=webdriver.PhantomJS(THIS_FOLDER+"\\phantomjs-2.1.1-windows\\bin\\phantomjs")
+driver.implicitly_wait(2)
 driver.get(url)
 
 scroll_time=2
@@ -35,20 +35,22 @@ post_lst=soup.find_all(attrs={
     'class':'api_txt_lines total_tit _cross_trigger'
 })
 
-id_list=[]
 
-with open("D:/2021-2/lesson/blogCrawler/id_informations.txt","r") as f:
+id_list=[]
+with open(THIS_FOLDER+"/"+"id_informations.txt","r") as f:
     while True:
         id=f.readline().strip()
         if not id:
             break
         id_list.append(id)
 
+
 alert_id_info=[]
 for i in post_lst:
+    print(i.text)
+    print(i['href'])
     for id in id_list:
         if id in i['href']:
-            print(i.text)
-            print(i['href'])
             alert_id_info.append(id+' '+i['href'])
+
 print(alert_id_info)
