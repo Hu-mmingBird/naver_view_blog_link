@@ -1,10 +1,51 @@
 from selenium import webdriver
 from bs4 import BeautifulSoup
 import time
+import requests
 import os
+import threading
+import telegram
+from telegram.ext import Updater, CommandHandler
 THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
+# [0]에서 메모한 정보를 넣어주세요
+my_api_key = "5115834164:AAG43dsLBxt9g5ybkZ3aZP2LGu94ueohHAs"   #내 API 키 정보
+chat_room_id = 1872321401   # 채팅방 ID
 
-def main():
+# 텔레그램 봇 세팅
+my_bot = telegram.Bot(my_api_key)
+updater = Updater(my_api_key)       # 봇에게 들어온 메시지가 있는지 체크
+updater.dispatcher.stop()
+updater.job_queue.stop()
+updater.stop()
+
+def TextPrint(receiver):
+    my_bot.sendMessage(chat_id=chat_room_id, text=receiver)
+
+def checker():
+    price = 0
+    while True:
+
+        if price != current_price:
+            message = "삼성전자 주가 변동\n" + str(price) + " => " + str(current_price)
+            my_bot.sendMessage(chat_id=chat_room_id, text=message)
+            price = current_price
+
+        time.sleep(10)  # 10초 마다 동작하도록 딜레이
+
+# 기능과 명령어 연결
+updater.dispatcher.add_handler(CommandHandler("hi", TextPrint))
+
+# 텔레그램 봇 시작
+updater.start_polling()
+updater.idle()
+
+t=threading.Thread(target=checker)
+t.start()
+
+#######################main########################
+while True:
+
+    time.sleep(1)
     url="https://search.naver.com/search.naver?where=view&sm=tab_jum&query=%EB%A7%9B%EC%A7%91"
     driver=webdriver.PhantomJS(THIS_FOLDER+"\\phantomjs-2.1.1-windows\\bin\\phantomjs")
     driver.implicitly_wait(2)
@@ -48,13 +89,19 @@ def main():
 
     alert_id_info=[]
     for i in post_lst:
-        print(i.text)
-        print(i['href'])
+        # print(i.text)
+        # print(i['href'])
         for id in id_list:
             if id in i['href']:
-                alert_id_info.append(id+' '+i['href'])
+                alert_id_info.append(id+' '+i['href']+'\n')
 
-    print(alert_id_info)
-        
-if __name__ == "__main__":
-	main()
+    if alert_id_info:
+        print("!-!-!-!-!-!-!BLOGs FOUND!-!-!-!-!-!-!")
+        tmp = ""
+        for k in alert_id_info:
+            tmp +=  k
+        # print(*alert_id_info,sep='\n')
+        bot.TextPrint(tmp)
+    else:
+        print('-----------BLOGs NOT FOUND-----------')
+    break
