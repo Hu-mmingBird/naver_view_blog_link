@@ -5,7 +5,6 @@ import requests
 import os
 import threading
 import telegram
-from telegram.ext import Updater, CommandHandler
 THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
 # [0]에서 메모한 정보를 넣어주세요
 my_api_key = "5115834164:AAG43dsLBxt9g5ybkZ3aZP2LGu94ueohHAs"   #내 API 키 정보
@@ -14,33 +13,10 @@ current_address = ""
 
 # 텔레그램 봇 세팅
 my_bot = telegram.Bot(my_api_key)
-updater = Updater(my_api_key)       # 봇에게 들어온 메시지가 있는지 체크
-updater.dispatcher.stop()
-updater.job_queue.stop()
-updater.stop()
 
 def TextPrint(receiver):
     my_bot.sendMessage(chat_id=chat_room_id, text=receiver)
 
-
-def checker():
-    global current_address
-    address = ""
-    while True:
-        if address != current_address:
-            my_bot.sendMessage(chat_id=chat_room_id, text=address)
-            address = current_address
-        time.sleep(10)  # 10초 마다 동작하도록 딜레이
-
-# 기능과 명령어 연결
-updater.dispatcher.add_handler(CommandHandler("hi", TextPrint))
-
-# 텔레그램 봇 시작
-updater.start_polling()
-updater.idle()
-
-t=threading.Thread(target=checker)
-t.start()
 
 #######################main########################
 while True:
@@ -88,21 +64,23 @@ while True:
 
 
     alert_id_info=[]
+    cnt=1
     for i in post_lst:
         # print(i.text)
         # print(i['href'])
         for id in id_list:
             if id in i['href']:
-                alert_id_info.append(id+' '+i['href']+'\n')
+                alert_id_info.append('['+str(cnt)+'] '+id+' '+i['href']+'\n')
+        cnt+=1
 
     if alert_id_info:
         print("!-!-!-!-!-!-!BLOGs FOUND!-!-!-!-!-!-!")
         tmp = ""
         for k in alert_id_info:
             tmp +=  k
-        current_address = tmp
-        # print(*alert_id_info,sep='\n')
-        
+        if current_address != tmp:
+            TextPrint(tmp)
+            current_address = tmp
+        print(*alert_id_info,sep='\n')
     else:
         print('-----------BLOGs NOT FOUND-----------')
-    break
