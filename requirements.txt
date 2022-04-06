@@ -1,0 +1,9 @@
+#pip install -r requirements.txt
+#python 3.9.12
+#https://www.python.org/downloads/release/python-3912/
+#https://phantomjs.org/download.html
+selenium
+beautifulsoup4
+requests
+thread6
+python-telegram-bot
