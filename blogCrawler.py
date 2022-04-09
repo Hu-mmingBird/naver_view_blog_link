@@ -1,5 +1,6 @@
 from selenium import webdriver
 from bs4 import BeautifulSoup
+from datetime import datetime
 import time
 import requests
 import os
@@ -7,16 +8,20 @@ import threading
 import telegram
 THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
 # [0]에서 메모한 정보를 넣어주세요
-my_api_key = "5115834164:AAG43dsLBxt9g5ybkZ3aZP2LGu94ueohHAs"   #내 API 키 정보
-chat_room_id = 1872321401   # 채팅방 ID
+my_api_key = ""   #내 API 키 정보
+chat_room_id = 1234567890   # 채팅방 ID
 current_address = ""
 
 # 텔레그램 봇 세팅
 my_bot = telegram.Bot(my_api_key)
 
 def TextPrint(receiver):
-    my_bot.sendMessage(chat_id=chat_room_id, text=receiver)
-
+    try:
+        my_bot.sendMessage(chat_id=chat_room_id, text=receiver)
+    except:
+        with open(THIS_FOLDER+"/log.txt","a") as f:
+            f.write(str(datetime.now())+"\n")
+        print("응답없음")
 
 #######################main########################
 while True:

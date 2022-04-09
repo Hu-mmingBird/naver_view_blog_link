@@ -5,5 +5,4 @@
 selenium
 beautifulsoup4
 requests
-thread6
 python-telegram-bot
